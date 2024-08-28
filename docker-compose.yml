@@ -1,0 +1,54 @@
+version: '3.6'
+
+services:
+  drupal:
+    image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image:${WISSKI_BASE_IMAGE_VERSION}
+      - drupal-modules:/var/www/html/modules
+      - drupal-profiles:/var/www/html/profiles
+      - drupal-themes:/var/www/html/themes
+      - drupal-libraries:/var/www/html/libraries
+      - drupal-sites:/var/www/html/sites
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_DRIVER: ${DB_DRIVER}
+      DEFAULT_GRAPH: ${DEFAULT_GRAPH}
+      DOMAIN: ${DOMAIN}
+      DRUPAL_USER: ${DRUPAL_USER}
+      DRUPAL_PASSWORD: ${DRUPAL_PASSWORD}
+      DB_NAME: ${DB_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USER: ${DB_USER}
+      SERVICE_NAME: ${SERVICE_NAME}
+      SITE_NAME: ${SITE_NAME}
+      TS_PASSWORD: ${TS_PASSWORD}
+      TS_READ_URL: ${TS_READ_URL}
+      TS_REPOSITORY: ${TS_REPOSITORY}
+      TS_USERNAME: ${TS_USERNAME}
+      TS_WRITE_URL: ${TS_WRITE_URL}
+    restart: unless-stopped
+    networks:
+      - traefik-public
+    deploy:
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=traefik-public
+        - traefik.constraint-label=traefik-public
+        - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
+        - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
+        - traefik.http.routers.${SERVICE_NAME}.middlewares=https-redirect
+        - traefik.http.routers.${SERVICE_NAME}.rule=Host(`${SERVICE_NAME}.${DOMAIN}`)
+        - traefik.http.routers.${SERVICE_NAME}.entrypoints=http,https
+        - traefik.http.routers.${SERVICE_NAME}.tls=true
+        - traefik.http.routers.${SERVICE_NAME}.tls.certresolver=le
+        - traefik.http.services.${SERVICE_NAME}.loadbalancer.server.port=80
+
+networks:
+  traefik-public:
+    external: true
+
+volumes:
+  drupal-modules:
+  drupal-profiles:
+  drupal-themes:
+  drupal-libraries:
+  drupal-sites:
