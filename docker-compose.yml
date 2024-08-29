@@ -26,12 +26,12 @@ services:
       TS_USERNAME: ${TS_USERNAME}
       TS_WRITE_URL: ${TS_WRITE_URL}
     networks:
-      - traefik-public
+      - reverse-proxy
     deploy:
       labels:
         - traefik.enable=true
-        - traefik.docker.network=traefik-public
-        - traefik.constraint-label=traefik-public
+        - traefik.docker.network=reverse-proxy
+        - traefik.constraint-label=reverse-proxy
         - traefik.http.middlewares.https-redirect.redirectscheme.scheme=https
         - traefik.http.middlewares.https-redirect.redirectscheme.permanent=true
         - traefik.http.routers.${SERVICE_NAME}.middlewares=https-redirect
@@ -42,7 +42,7 @@ services:
         - traefik.http.services.${SERVICE_NAME}.loadbalancer.server.port=80
 
 networks:
-  traefik-public:
+  reverse-proxy:
     external: true
 
 volumes:
