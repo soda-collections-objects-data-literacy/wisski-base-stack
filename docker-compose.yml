@@ -25,7 +25,6 @@ services:
       TS_REPOSITORY: ${TS_REPOSITORY}
       TS_USERNAME: ${TS_USERNAME}
       TS_WRITE_URL: ${TS_WRITE_URL}
-    restart: unless-stopped
     networks:
       - traefik-public
     deploy:
