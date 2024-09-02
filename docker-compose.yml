@@ -31,8 +31,6 @@ services:
         - "traefik.enable=true"
         - "traefik.docker.network=reverse-proxy"
         - "traefik.constraint-label=reverse-proxy"
-        - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
-        - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
         - "traefik.http.routers.${SERVICE_NAME}.middlewares=https-redirect"
         - "traefik.http.routers.${SERVICE_NAME}.rule=Host(`${SERVICE_NAME}.${DOMAIN}`)"
         - "traefik.http.routers.${SERVICE_NAME}.entrypoints=web,websecure"
