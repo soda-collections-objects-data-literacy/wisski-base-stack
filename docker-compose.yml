@@ -35,7 +35,7 @@ services:
         - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
         - "traefik.http.routers.${SERVICE_NAME}.middlewares=https-redirect"
         - "traefik.http.routers.${SERVICE_NAME}.rule=Host(`${SERVICE_NAME}.${DOMAIN}`)"
-        - "traefik.http.routers.${SERVICE_NAME}.entrypoints=http,https"
+        - "traefik.http.routers.${SERVICE_NAME}.entrypoints=web,websecure"
         - "traefik.http.routers.${SERVICE_NAME}.tls=true"
         - "traefik.http.routers.${SERVICE_NAME}.tls.certresolver=le"
         - "traefik.http.services.${SERVICE_NAME}.loadbalancer.server.port=80"
