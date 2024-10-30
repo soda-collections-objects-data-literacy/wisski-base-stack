@@ -25,6 +25,7 @@ services:
       TS_USERNAME: ${TS_USERNAME}
       TS_WRITE_URL: ${TS_WRITE_URL}
       WISSKI_GRAIN_RECIPE_VERSION: ${WISSKI_GRAIN_RECIPE_VERSION}
+      WISSKI_YEAST_RECIPE_VERSION: ${WISSKI_YEAST_RECIPE_VERSION}
     networks:
       - scs-manager_reverse-proxy
     deploy:
