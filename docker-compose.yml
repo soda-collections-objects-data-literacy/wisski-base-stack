@@ -1,7 +1,7 @@
 services:
   drupal:
     image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image:${WISSKI_BASE_IMAGE_VERSION}
-    name: ${SERVICE_NAME}--drupal
+    container_name: ${SERVICE_NAME}--drupal
     volumes:
       - drupal-modules:/var/www/html/modules
       - drupal-profiles:/var/www/html/profiles
