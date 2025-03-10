@@ -59,3 +59,5 @@ volumes:
   drupal-libraries:
   drupal-sites:
   soda_scs_manager_deployment_shared-data:
+    external: true
+
