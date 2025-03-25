@@ -6,8 +6,6 @@ services:
       - drupal-libraries:/var/www/html/libraries
       - drupal-modules:/var/www/html/modules
       - drupal-profiles:/var/www/html/profiles
-      - drupal-requirements:/opt/drupal/composer.json
-      - drupal-server_config:/var/www/html/.htaccess
       - drupal-sites:/var/www/html/sites
       - drupal-themes:/var/www/html/themes
       - soda_scs_manager_deployment_shared-data:/var/private-files
@@ -58,7 +56,6 @@ volumes:
   drupal-libraries:
   drupal-modules:
   drupal-profiles:
-  drupal-requirements:
   drupal-server_config:
   drupal-sites:
   drupal-themes:
