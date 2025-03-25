@@ -3,11 +3,13 @@ services:
     image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image:${WISSKI_BASE_IMAGE_VERSION}
     container_name: ${SERVICE_NAME}--drupal
     volumes:
+      - drupal-libraries:/var/www/html/libraries
       - drupal-modules:/var/www/html/modules
       - drupal-profiles:/var/www/html/profiles
-      - drupal-themes:/var/www/html/themes
-      - drupal-libraries:/var/www/html/libraries
+      - drupal-requirements:/opt/drupal/composer.json
+      - drupal-server_config:/var/www/html/.htaccess
       - drupal-sites:/var/www/html/sites
+      - drupal-themes:/var/www/html/themes
       - soda_scs_manager_deployment_shared-data:/var/private-files
     environment:
       DB_HOST: ${DB_HOST}
@@ -53,11 +55,13 @@ networks:
     external: true
 
 volumes:
+  drupal-libraries:
   drupal-modules:
   drupal-profiles:
-  drupal-themes:
-  drupal-libraries:
+  drupal-requirements:
+  drupal-server_config:
   drupal-sites:
+  drupal-themes:
   soda_scs_manager_deployment_shared-data:
     external: true
 
