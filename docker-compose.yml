@@ -3,7 +3,7 @@ services:
     image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image:${WISSKI_BASE_IMAGE_VERSION}
     container_name: ${SERVICE_NAME}--drupal
     volumes:
-      - drupal-root:/var/www/html
+      - drupal-root:/opt/drupal
       - soda_scs_manager_deployment_shared-data:/var/private-files
     environment:
       DB_HOST: ${DB_HOST}
