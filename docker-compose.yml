@@ -6,8 +6,6 @@ services:
       # this path is important for snapshots of the wisski components
       - drupal-root:/opt/drupal
       - soda_scs_manager_deployment_shared-data:/var/private-files
-    args:
-      USER_GROUPS: ${USER_GROUPS}
     environment:
       DB_HOST: ${DB_HOST}
       DB_DRIVER: ${DB_DRIVER}
