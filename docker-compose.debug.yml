@@ -1,0 +1,87 @@
+services:
+  drupal:
+    image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image:${WISSKI_BASE_IMAGE_VERSION}
+    container_name: ${SERVICE_NAME}--drupal
+    volumes:
+      # this path is important for snapshots of the wisski components
+      - drupal-root:/opt/drupal
+      - soda_scs_manager_deployment_shared-data:/var/private-files
+      # Mount debug script
+      - ./debug-entrypoint.sh:/debug-entrypoint.sh:ro
+    environment:
+      # Enable debug mode
+      DEBUG: "false"
+
+      # Database settings
+      DB_HOST: ${DB_HOST}
+      DB_DRIVER: ${DB_DRIVER}
+      DB_NAME: ${DB_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_USER: ${DB_USER}
+      DB_PORT: ${DB_PORT:-3306}
+
+      # Drupal settings
+      DEFAULT_GRAPH: ${DEFAULT_GRAPH}
+      DOMAIN: ${DOMAIN}
+      DRUPAL_USER: ${DRUPAL_USER}
+      DRUPAL_PASSWORD: ${DRUPAL_PASSWORD}
+      DRUPAL_TRUSTED_HOST: ${DRUPAL_TRUSTED_HOST}
+      SITE_NAME: ${SITE_NAME}
+
+      # Optional Keycloak settings
+      KEYCLOAK_ADMIN_GROUP: ${KEYCLOAK_ADMIN_GROUP:-}
+      KEYCLOAK_USER_GROUP: ${KEYCLOAK_USER_GROUP:-}
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM:-}
+      OPENID_CONNECT_CLIENT_SECRET: ${OPENID_CONNECT_CLIENT_SECRET:-}
+
+      # Triplestore settings
+      TS_PASSWORD: ${TS_PASSWORD:-}
+      TS_READ_URL: ${TS_READ_URL:-}
+      TS_REPOSITORY: ${TS_REPOSITORY:-}
+      TS_TOKEN: ${TS_TOKEN:-}
+      TS_USERNAME: ${TS_USERNAME:-}
+      TS_WRITE_URL: ${TS_WRITE_URL:-}
+
+      # WissKI settings
+      WISSKI_FLAVOURS: ${WISSKI_FLAVOURS:-}
+      WISSKI_BASE_IMAGE_VERSION: ${WISSKI_BASE_IMAGE_VERSION}
+      SERVICE_NAME: ${SERVICE_NAME}
+
+    networks:
+      - reverse-proxy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=reverse-proxy"
+      - "traefik.http.routers.${SERVICE_NAME}.middlewares=https-redirect"
+      - "traefik.http.routers.${SERVICE_NAME}.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${SERVICE_NAME}.entrypoints=web,websecure"
+      - "traefik.http.routers.${SERVICE_NAME}.tls=true"
+      - "traefik.http.routers.${SERVICE_NAME}.tls.certresolver=le"
+      - "traefik.http.services.${SERVICE_NAME}.loadbalancer.server.port=80"
+
+  # Add a database service for local testing if needed
+  database:
+    image: mysql:8.0
+    container_name: ${SERVICE_NAME}--database
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - database-data:/var/lib/mysql
+    networks:
+      - reverse-proxy
+    ports:
+      - "3306:3306"
+    command: --default-authentication-plugin=mysql_native_password
+
+networks:
+  reverse-proxy:
+    external: true
+
+volumes:
+  drupal-root:
+  database-data:
+  soda_scs_manager_deployment_shared-data:
+    external: true
