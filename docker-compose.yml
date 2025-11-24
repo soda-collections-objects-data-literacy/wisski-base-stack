@@ -124,7 +124,6 @@ networks:
     external: true
   internal:
     driver: bridge
-    name: ${SERVICE_NAME}--network
 
 volumes:
   drupal-root:
