@@ -1,18 +1,23 @@
 services:
   drupal:
-    image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image:${WISSKI_BASE_IMAGE_VERSION}
+    image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image:${WISSKI_BASE_IMAGE_VERSION:-latest}
     container_name: ${SERVICE_NAME}--drupal
+    depends_on:
+      redis:
+        condition: service_healthy
     volumes:
       # this path is important for snapshots of the wisski components
       - drupal-root:/opt/drupal
       - soda_scs_manager_deployment_shared-data:/var/private-files
     environment:
+      APACHE_LOGGING: ${APACHE_LOGGING:-false}
       DB_DRIVER: ${DB_DRIVER}
       DB_HOST: ${DB_HOST}
       DB_NAME: ${DB_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_PORT: ${DB_PORT}
       DB_USER: ${DB_USER}
+      DEBUG: ${DEBUG:-false}
       DEFAULT_GRAPH: ${DEFAULT_GRAPH}
       DOMAIN: ${DOMAIN}
       DRUPAL_PASSWORD: ${DRUPAL_PASSWORD}
@@ -21,7 +26,10 @@ services:
       KEYCLOAK_ADMIN_GROUP: ${KEYCLOAK_ADMIN_GROUP}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
       KEYCLOAK_USER_GROUP: ${KEYCLOAK_USER_GROUP}
+      MODE: ${MODE:-production}
       OPENID_CONNECT_CLIENT_SECRET: ${OPENID_CONNECT_CLIENT_SECRET}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
       SERVICE_NAME: ${SERVICE_NAME}
       SITE_NAME: ${SITE_NAME}
       TS_PASSWORD: ${TS_PASSWORD}
@@ -32,10 +40,15 @@ services:
       TS_WRITE_URL: ${TS_WRITE_URL}
       USER_GROUPS: ${USER_GROUPS}
       WISSKI_BASE_IMAGE_VERSION: ${WISSKI_BASE_IMAGE_VERSION}
-      WISSKI_FLAVOURS: ${WISSKI_FLAVOURS}
+      WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION:-1.x-dev}
+      WISSKI_STARTER_VERSION: ${WISSKI_STARTER_VERSION:-1.x-dev}
+
+    ports:
+      - ${DRUPAL_PORT:-80}:80
 
     networks:
       - reverse-proxy
+      - internal
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=reverse-proxy"
@@ -45,13 +58,82 @@ services:
       - "traefik.http.routers.${SERVICE_NAME}.tls=true"
       - "traefik.http.routers.${SERVICE_NAME}.tls.certresolver=le"
       - "traefik.http.services.${SERVICE_NAME}.loadbalancer.server.port=80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+  redis:
+    image: redis:7.4-alpine
+    container_name: ${SERVICE_NAME}--redis
+    restart: always
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru --save 60 1000 --appendonly yes
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 768M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    networks:
+      - internal
+    labels:
+      - "traefik.enable=false"
+
+  varnish:
+    image: varnish:7.6
+    container_name: ${SERVICE_NAME}--varnish
+    restart: always
+    depends_on:
+      drupal:
+        condition: service_healthy
+    environment:
+      - VARNISH_SIZE=256M
+
+    volumes:
+      - ./varnish/default.vcl:/etc/varnish/default.vcl:ro
+    tmpfs:
+      - /var/lib/varnish/varnishd:exec,uid=999,gid=999
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    healthcheck:
+      test: ["CMD", "varnishstat", "-1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - internal
+    labels:
+      - "traefik.enable=false"
 
 networks:
   reverse-proxy:
     external: true
+  internal:
+    driver: bridge
+    name: ${SERVICE_NAME}--network
 
 volumes:
   drupal-root:
+    name: ${SERVICE_NAME}--drupal-root
+  redis-data:
+    name: ${SERVICE_NAME}--redis-data
   soda_scs_manager_deployment_shared-data:
     external: true
 
