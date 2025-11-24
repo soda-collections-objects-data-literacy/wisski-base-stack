@@ -2,9 +2,6 @@ services:
   drupal:
     image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image:${WISSKI_BASE_IMAGE_VERSION:-latest}
     container_name: ${SERVICE_NAME}--drupal
-    depends_on:
-      redis:
-        condition: service_healthy
     volumes:
       # this path is important for snapshots of the wisski components
       - drupal-root:/opt/drupal
@@ -90,9 +87,6 @@ services:
     image: varnish:7.6
     container_name: ${SERVICE_NAME}--varnish
     restart: always
-    depends_on:
-      drupal:
-        condition: service_healthy
     environment:
       - VARNISH_SIZE=256M
 
