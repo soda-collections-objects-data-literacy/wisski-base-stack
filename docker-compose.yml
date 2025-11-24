@@ -84,16 +84,9 @@ services:
       - "traefik.enable=false"
 
   varnish:
-    image: varnish:7.6
+    image: ghcr.io/soda-collections-objects-data-literacy/scs-varnish:${SCS_VARNISH_VERSION:-latest}
     container_name: ${SERVICE_NAME}--varnish
     restart: always
-    environment:
-      - VARNISH_SIZE=256M
-
-    volumes:
-      - ./varnish/default.vcl:/etc/varnish/default.vcl:ro
-    tmpfs:
-      - /var/lib/varnish/varnishd:exec,uid=999,gid=999
     deploy:
       resources:
         limits:
