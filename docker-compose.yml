@@ -57,7 +57,7 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-fsS", "-H", "Host: ${DOMAIN}", "http://localhost/health"]
       interval: 30s
-      timeout: 300s
+      timeout: 600s
       retries: 3
       start_period: 60s
   redis:
