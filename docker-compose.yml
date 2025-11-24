@@ -43,9 +43,6 @@ services:
       WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION:-1.x-dev}
       WISSKI_STARTER_VERSION: ${WISSKI_STARTER_VERSION:-1.x-dev}
 
-    ports:
-      - ${DRUPAL_PORT:-80}:80
-
     networks:
       - reverse-proxy
       - internal
