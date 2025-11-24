@@ -2,6 +2,9 @@ services:
   drupal:
     image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image:${WISSKI_BASE_IMAGE_VERSION:-latest}
     container_name: ${SERVICE_NAME}--drupal
+    depends_on:
+      redis:
+        condition: service_healthy
     volumes:
       # this path is important for snapshots of the wisski components
       - drupal-root:/opt/drupal
@@ -39,7 +42,6 @@ services:
       WISSKI_BASE_IMAGE_VERSION: ${WISSKI_BASE_IMAGE_VERSION}
       WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION:-1.x-dev}
       WISSKI_STARTER_VERSION: ${WISSKI_STARTER_VERSION:-1.x-dev}
-
     networks:
       - reverse-proxy
       - internal
@@ -87,6 +89,9 @@ services:
     image: ghcr.io/soda-collections-objects-data-literacy/scs-varnish:${SCS_VARNISH_VERSION:-latest}
     container_name: ${SERVICE_NAME}--varnish
     restart: always
+    depends_on:
+      drupal:
+        condition: service_healthy
     deploy:
       resources:
         limits:
