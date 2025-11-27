@@ -78,13 +78,32 @@ sub vcl_recv {
         return (pass);
     }
 
+    # Flag cacheable authenticated WissKI routes.
+    if ((req.url ~ "^/wisski/navigate" || req.url ~ "^/wisski_views") && req.http.Cookie) {
+        set req.http.X-Wisski-Cacheable = "1";
+
+        if (req.http.Cookie ~ "SSESS[a-z0-9]+") {
+            set req.http.X-Wisski-Session = regsub(req.http.Cookie, ".*(SSESS[a-z0-9]+=[^;]+).*", "\1");
+        }
+        elseif (req.http.Cookie ~ "SESS[a-z0-9]+") {
+            set req.http.X-Wisski-Session = regsub(req.http.Cookie, ".*(SESS[a-z0-9]+=[^;]+).*", "\1");
+        }
+        else {
+            unset req.http.X-Wisski-Session;
+        }
+    }
+    else {
+        unset req.http.X-Wisski-Cacheable;
+        unset req.http.X-Wisski-Session;
+    }
+
     # Drupal 11: Remove cookies for anonymous users.
     if (!(req.http.Cookie ~ "SESS") && !(req.http.Cookie ~ "SSESS")) {
         unset req.http.Cookie;
     }
 
     # Pass anything that's authenticated.
-    if (req.http.Authorization || req.http.Cookie) {
+    if (req.http.Authorization || (req.http.Cookie && req.http.X-Wisski-Cacheable != "1")) {
         return (pass);
     }
 
@@ -115,6 +134,13 @@ sub vcl_backend_response {
     # Allow items to be stale if needed.
     set beresp.grace = 6h;
 
+    # Force a sensible TTL for cacheable WissKI pages even if Drupal marks them dynamic.
+    if (bereq.http.X-Wisski-Cacheable == "1" &&
+        beresp.ttl <= 0s &&
+        !beresp.http.Set-Cookie) {
+        set beresp.ttl = 300s;
+    }
+
     # Cache everything by default for 5 minutes.
     if (beresp.ttl <= 0s ||
         beresp.http.Set-Cookie ||
@@ -125,6 +151,26 @@ sub vcl_backend_response {
     }
 
     return (deliver);
+}
+
+sub vcl_hash {
+    hash_data(req.url);
+    if (req.http.host) {
+        hash_data(req.http.host);
+    }
+    else {
+        hash_data(server.ip);
+    }
+
+    if (req.http.Accept-Encoding) {
+        hash_data(req.http.Accept-Encoding);
+    }
+
+    if (req.http.X-Wisski-Session) {
+        hash_data(req.http.X-Wisski-Session);
+    }
+
+    return (lookup);
 }
 
 sub vcl_deliver {
@@ -140,6 +186,8 @@ sub vcl_deliver {
     unset resp.http.Via;
     unset resp.http.X-Generator;
     unset resp.http.X-Powered-By;
+    unset resp.http.X-Wisski-Session;
+    unset resp.http.X-Wisski-Cacheable;
     return (deliver);
 }
 
