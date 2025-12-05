@@ -46,12 +46,11 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=reverse-proxy"
-      - "traefik.http.routers.${SERVICE_NAME}.middlewares=https-redirect"
-      - "traefik.http.routers.${SERVICE_NAME}.rule=Host(`${DOMAIN}`)"
-      - "traefik.http.routers.${SERVICE_NAME}.entrypoints=web,websecure"
-      - "traefik.http.routers.${SERVICE_NAME}.tls=true"
-      - "traefik.http.routers.${SERVICE_NAME}.tls.certresolver=le"
-      - "traefik.http.services.${SERVICE_NAME}.loadbalancer.server.port=80"
+      - "traefik.http.routers.${SERVICE_NAME}-raw.rule=Host(`raw.${DOMAIN}`)"
+      - "traefik.http.routers.${SERVICE_NAME}-raw.entrypoints=web,websecure"
+      - "traefik.http.routers.${SERVICE_NAME}-raw.tls=true"
+      - "traefik.http.routers.${SERVICE_NAME}-raw.tls.certresolver=le"
+      - "traefik.http.services.${SERVICE_NAME}-raw.loadbalancer.server.port=80"
     healthcheck:
       test: ["CMD", "curl", "-fsS", "-H", "Host: ${DOMAIN}", "http://localhost/health"]
       interval: 30s
@@ -113,9 +112,17 @@ services:
       retries: 3
       start_period: 10s
     networks:
+      - reverse-proxy
       - internal
     labels:
-      - "traefik.enable=false"
+      - "traefik.enable=true"
+      - "traefik.docker.network=reverse-proxy"
+      - "traefik.http.routers.${SERVICE_NAME}.middlewares=https-redirect"
+      - "traefik.http.routers.${SERVICE_NAME}.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${SERVICE_NAME}.entrypoints=web,websecure"
+      - "traefik.http.routers.${SERVICE_NAME}.tls=true"
+      - "traefik.http.routers.${SERVICE_NAME}.tls.certresolver=le"
+      - "traefik.http.services.${SERVICE_NAME}.loadbalancer.server.port=80"
 
 networks:
   reverse-proxy:
