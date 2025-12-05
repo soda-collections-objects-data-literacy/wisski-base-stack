@@ -1,6 +1,6 @@
 services:
   drupal:
-    image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image:${WISSKI_BASE_IMAGE_VERSION:-latest}
+    image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image-${MODE:-production}:${WISSKI_BASE_IMAGE_VERSION:-latest}
     container_name: ${SERVICE_NAME}--drupal
     depends_on:
       redis:
@@ -8,18 +8,17 @@ services:
     volumes:
       # this path is important for snapshots of the wisski components
       - drupal-root:/opt/drupal
-      - soda_scs_manager_deployment_shared-data:/var/private-files
+      - soda_scs_manager_deployment_shared-data:/opt/drupal/private-files
     environment:
-      APACHE_LOGGING: ${APACHE_LOGGING:-false}
       DB_DRIVER: ${DB_DRIVER}
       DB_HOST: ${DB_HOST}
       DB_NAME: ${DB_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
       DB_PORT: ${DB_PORT}
       DB_USER: ${DB_USER}
-      DEBUG: ${DEBUG:-false}
       DEFAULT_GRAPH: ${DEFAULT_GRAPH}
       DOMAIN: ${DOMAIN}
+      DRUPAL_LOCALE: ${DRUPAL_LOCALE}
       DRUPAL_PASSWORD: ${DRUPAL_PASSWORD}
       DRUPAL_TRUSTED_HOST: ${DRUPAL_TRUSTED_HOST}
       DRUPAL_USER: ${DRUPAL_USER}
@@ -39,9 +38,8 @@ services:
       TS_USERNAME: ${TS_USERNAME}
       TS_WRITE_URL: ${TS_WRITE_URL}
       USER_GROUPS: ${USER_GROUPS}
-      WISSKI_BASE_IMAGE_VERSION: ${WISSKI_BASE_IMAGE_VERSION}
-      WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION:-1.x-dev}
-      WISSKI_STARTER_VERSION: ${WISSKI_STARTER_VERSION:-1.x-dev}
+      WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION:-1.3.0}
+      WISSKI_STARTER_VERSION: ${WISSKI_STARTER_VERSION:-1.1.0}
     networks:
       - reverse-proxy
       - internal
@@ -57,7 +55,7 @@ services:
     healthcheck:
       test: ["CMD", "curl", "-fsS", "-H", "Host: ${DOMAIN}", "http://localhost/health"]
       interval: 30s
-      timeout: 600s
+      timeout: 60s
       retries: 3
       start_period: 180s
   redis:
@@ -91,7 +89,11 @@ services:
     restart: always
     depends_on:
       drupal:
-        condition: service_started
+        condition: service_healthy
+    environment:
+      - VARNISH_SIZE=256M
+    tmpfs:
+      - /var/lib/varnish/varnishd:exec,uid=999,gid=999
     deploy:
       resources:
         limits:
@@ -100,6 +102,10 @@ services:
         reservations:
           cpus: '0.25'
           memory: 256M
+    ulimits:
+      memlock:
+        soft: 536870912
+        hard: 536870912
     healthcheck:
       test: ["CMD", "varnishstat", "-1"]
       interval: 30s
