@@ -89,7 +89,7 @@ services:
     restart: always
     depends_on:
       drupal:
-        condition: service_healthy
+        condition: service_started
     environment:
       - VARNISH_SIZE=256M
     tmpfs:
