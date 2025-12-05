@@ -91,6 +91,8 @@ services:
         condition: service_started
     environment:
       - VARNISH_SIZE=256M
+      - VARNISH_BACKEND_HOST=${SERVICE_NAME}--drupal
+      - VARNISH_BACKEND_PORT=80
     tmpfs:
       - /var/lib/varnish/varnishd:exec,uid=999,gid=999
     deploy:
