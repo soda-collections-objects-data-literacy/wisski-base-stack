@@ -83,7 +83,7 @@ services:
       - "traefik.enable=false"
 
   varnish:
-    image: ghcr.io/soda-collections-objects-data-literacy/scs-varnish:${SCS_VARNISH_VERSION:-1.0.0}
+    image: ghcr.io/soda-collections-objects-data-literacy/scs-varnish:${VARNISH_IMAGE_VERSION:-1.0.0}
     container_name: ${SERVICE_NAME}--varnish
     restart: always
     depends_on:

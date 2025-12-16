@@ -41,6 +41,7 @@ REDIS_PORT=6379
 
 # Varnish settings
 VARNISH_PORT=8000
+VARNISH_IMAGE_VERSION=1.0.0
 
 # TS settings
 DEFAULT_GRAPH=https://my.wiss-ki.eu/
