@@ -1,6 +1,6 @@
 services:
   drupal:
-    image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image-${MODE:-production}:${WISSKI_BASE_IMAGE_VERSION:-1.0.0}
+    image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image-${MODE:-production}:${WISSKI_BASE_IMAGE_VERSION:-1.0.1}
     container_name: ${SERVICE_NAME}--drupal
     depends_on:
       redis:
