@@ -1,6 +1,6 @@
 services:
   drupal:
-    image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image-${MODE:-production}:${WISSKI_BASE_IMAGE_VERSION:-latest}
+    image: ghcr.io/soda-collections-objects-data-literacy/wisski-base-image-${MODE:-production}:${WISSKI_BASE_IMAGE_VERSION:-1.0.0}
     container_name: ${SERVICE_NAME}--drupal
     depends_on:
       redis:
@@ -38,7 +38,7 @@ services:
       TS_USERNAME: ${TS_USERNAME}
       TS_WRITE_URL: ${TS_WRITE_URL}
       USER_GROUPS: ${USER_GROUPS}
-      WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION:-1.3.0}
+      WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION:-1.3.2}
       WISSKI_STARTER_VERSION: ${WISSKI_STARTER_VERSION:-1.1.0}
     networks:
       - reverse-proxy
@@ -83,7 +83,7 @@ services:
       - "traefik.enable=false"
 
   varnish:
-    image: ghcr.io/soda-collections-objects-data-literacy/scs-varnish:${SCS_VARNISH_VERSION:-latest}
+    image: ghcr.io/soda-collections-objects-data-literacy/scs-varnish:${SCS_VARNISH_VERSION:-1.0.0}
     container_name: ${SERVICE_NAME}--varnish
     restart: always
     depends_on:
