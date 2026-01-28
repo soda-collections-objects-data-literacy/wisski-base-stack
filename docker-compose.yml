@@ -139,6 +139,7 @@ volumes:
     name: ${SERVICE_NAME}--drupal-root
   redis-data:
     name: ${SERVICE_NAME}--redis-data
-  soda_scs_manager_deployment_shared-data:
+  ${SHARED_DATA_VOLUME}:
+    name: ${SHARED_DATA_VOLUME}
     external: true
 
