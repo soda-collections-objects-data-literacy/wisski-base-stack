@@ -8,7 +8,7 @@ services:
     volumes:
       # this path is important for snapshots of the wisski components
       - drupal-root:/opt/drupal
-      - ${SHARED_DATA_VOLUME}:/var/private-files
+      - shared-data:/var/private-files
     environment:
       DB_DRIVER: ${DB_DRIVER}
       DB_HOST: ${DB_HOST}
@@ -139,7 +139,7 @@ volumes:
     name: ${SERVICE_NAME}--drupal-root
   redis-data:
     name: ${SERVICE_NAME}--redis-data
-  ${SHARED_DATA_VOLUME}:
+  shared-data:
     name: ${SHARED_DATA_VOLUME}
     external: true
 
