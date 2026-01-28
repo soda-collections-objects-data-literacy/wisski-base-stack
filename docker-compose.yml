@@ -8,7 +8,7 @@ services:
     volumes:
       # this path is important for snapshots of the wisski components
       - drupal-root:/opt/drupal
-      - soda_scs_manager_deployment_shared-data:/var/private-files
+      - ${SHARED_DATA_VOLUME}:/var/private-files
     environment:
       DB_DRIVER: ${DB_DRIVER}
       DB_HOST: ${DB_HOST}

@@ -3,6 +3,7 @@ DEBUG=true
 MODE=production
 SERVICE_NAME=wisski-base-stack
 WISSKI_BASE_IMAGE_VERSION=latest
+SHARED_DATA_VOLUME=scs--shared-data
 
 # Adminer settings
 ADMINER_PORT=8081
