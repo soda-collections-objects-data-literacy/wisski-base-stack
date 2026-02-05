@@ -47,7 +47,7 @@ services:
       - "traefik.enable=true"
       - "traefik.docker.network=reverse-proxy"
       - "traefik.http.routers.${SERVICE_NAME}-drupal.rule=Host(`raw.${DRUPAL_DOMAIN}`)"
-      - "traefik.http.routers.${SERVICE_NAME}-drupal.entrypoints=web,websecure"
+      - "traefik.http.routers.${SERVICE_NAME}-drupal.entrypoints=websecure"
       - "traefik.http.routers.${SERVICE_NAME}-drupal.tls=true"
       - "traefik.http.routers.${SERVICE_NAME}-drupal.tls.certresolver=le"
       - "traefik.http.services.${SERVICE_NAME}-drupal.loadbalancer.server.port=80"
