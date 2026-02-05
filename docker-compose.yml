@@ -121,9 +121,8 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=reverse-proxy"
-      - "traefik.http.routers.${SERVICE_NAME}--varnish.middlewares=https-redirect"
       - "traefik.http.routers.${SERVICE_NAME}--varnish.rule=Host(`${DRUPAL_DOMAIN}`)"
-      - "traefik.http.routers.${SERVICE_NAME}--varnish.entrypoints=web,websecure"
+      - "traefik.http.routers.${SERVICE_NAME}--varnish.entrypoints=websecure"
       - "traefik.http.routers.${SERVICE_NAME}--varnish.tls=true"
       - "traefik.http.routers.${SERVICE_NAME}--varnish.tls.certresolver=le"
       - "traefik.http.services.${SERVICE_NAME}--varnish.loadbalancer.server.port=80"
