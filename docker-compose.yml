@@ -8,7 +8,7 @@ services:
     volumes:
       # this path is important for snapshots of the wisski components
       - drupal-root:/opt/drupal
-      - soda_scs_manager_deployment_shared-data:/var/private-files
+      - ${SHARED_DATA_VOLUME}:/var/private-files
     environment:
       DB_DRIVER: ${DB_DRIVER}
       DB_HOST: ${DB_HOST}
@@ -19,8 +19,10 @@ services:
       DRUPAL_DOMAIN: ${DRUPAL_DOMAIN}
       DRUPAL_LOCALE: ${DRUPAL_LOCALE}
       DRUPAL_PASSWORD: ${DRUPAL_PASSWORD}
+      DRUPAL_PRIVATE_FILES_DIR: ${DRUPAL_PRIVATE_FILES_DIR}
+      DRUPAL_PROXY_ADDRESSES: ${DRUPAL_PROXY_ADDRESSES}
       DRUPAL_SITE_NAME: ${DRUPAL_SITE_NAME}
-      DRUPAL_TRUSTED_HOST: ${DRUPAL_TRUSTED_HOST}
+      DRUPAL_TRUSTED_HOSTS: ${DRUPAL_TRUSTED_HOSTS}
       DRUPAL_USER: ${DRUPAL_USER}
       KEYCLOAK_ADMIN_GROUP: ${KEYCLOAK_ADMIN_GROUP}
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
@@ -90,9 +92,9 @@ services:
       drupal:
         condition: service_started
     environment:
-      - VARNISH_SIZE=${VARNISH_SIZE}
+      - VARNISH_SIZE=${VARNISH_SIZE:-512M}
       - VARNISH_BACKEND_HOST=${SERVICE_NAME}--drupal
-      - VARNISH_BACKEND_PORT=${VARNISH_PORT}
+      - VARNISH_BACKEND_PORT=${VARNISH_BACKEND_PORT:-80}
     tmpfs:
       - /var/lib/varnish/varnishd:exec,uid=999,gid=999
     deploy:
@@ -137,6 +139,7 @@ volumes:
     name: ${SERVICE_NAME}--drupal-root
   redis-data:
     name: ${SERVICE_NAME}--redis-data
-  soda_scs_manager_deployment_shared-data:
+  ${SHARED_DATA_VOLUME}:
+    name: ${SHARED_DATA_VOLUME}
     external: true
 
