@@ -6,9 +6,7 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      # this path is important for snapshots of the wisski components
       - drupal-root:/opt/drupal
-      - scs--shared-data:/var/private-files
     environment:
       DB_DRIVER: ${DB_DRIVER}
       DB_HOST: ${DB_HOST}
@@ -29,6 +27,9 @@ services:
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
       KEYCLOAK_USER_GROUP: ${KEYCLOAK_USER_GROUP}
       MODE: ${MODE:-production}
+      NEXTCLOUD_BASE_URL: ${NEXTCLOUD_BASE_URL}
+      NEXTCLOUD_LOGIN_NAME: ${NEXTCLOUD_LOGIN_NAME}
+      NEXTCLOUD_APP_PASSWORD: ${NEXTCLOUD_APP_PASSWORD}
       OPENID_CONNECT_CLIENT_SECRET: ${OPENID_CONNECT_CLIENT_SECRET}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
@@ -139,7 +140,3 @@ volumes:
     name: ${SERVICE_NAME}--drupal-root
   redis-data:
     name: ${SERVICE_NAME}--redis-data
-  scs--shared-data:
-    name: ${SHARED_DATA_VOLUME}
-    external: true
-
