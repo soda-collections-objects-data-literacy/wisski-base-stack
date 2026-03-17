@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.4.0] - Unreleased
+
+### Added
+- Add Nextcloud connection environment variables: `NEXTCLOUD_BASE_URL`, `NEXTCLOUD_LOGIN_NAME`, `NEXTCLOUD_APP_PASSWORD`
+
+### Changed
+- Remove shared volume (`scs--shared-data`) and `/var/private-files` mount from drupal service
+
+### Files Modified
+- `docker-compose.yml`: Replace shared volume with Nextcloud env vars, remove external volume definition
+
+## [2.3.0] - 2026-02-05
+
+### Added
+- Add `KEYCLOAK_URL` environment variable for configurable OpenID Connect auth URL
+
+### Files Modified
+- `docker-compose.yml`: Pass KEYCLOAK_URL to drupal service
+
 ## [2.2.1] - 2026-02-05
 - Add CHANGELOG.md
 
