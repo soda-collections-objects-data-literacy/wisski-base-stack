@@ -5,7 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.4.0] - Unreleased
+## [3.0.0] - Unreleased
+
+### Changed
+- Replace the `drupal-root` volume with two volumes: `drupal-sites` (`/opt/drupal/web/sites`) and `drupal-private-files` (`/opt/drupal/private-files`); the codebase is immutable in the 3.x base image (breaking: 2.x `drupal-root` volumes are not compatible, migrate `web/sites` and private files manually)
+- Default `DRUPAL_PRIVATE_FILES_DIR` to `/opt/drupal/private-files` (outside the web root)
+- `WISSKI_STARTER_VERSION` and `WISSKI_DEFAULT_DATA_MODEL_VERSION` now act as recipe apply flags (non-empty = apply); module and recipe versions are baked into the image via the drupal_packages manifest
+
+### Files Modified
+- `docker-compose.yml`: New volume layout, recipe flag defaults, private files default
+
+## [2.4.0] - 2026-3-17
 
 ### Added
 - Add Nextcloud connection environment variables: `NEXTCLOUD_BASE_URL`, `NEXTCLOUD_LOGIN_NAME`, `NEXTCLOUD_APP_PASSWORD`

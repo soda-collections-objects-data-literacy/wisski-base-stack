@@ -6,7 +6,10 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - drupal-root:/opt/drupal
+      # The codebase is immutable in the image; only site state and private
+      # files persist across container recreations.
+      - drupal-sites:/opt/drupal/web/sites
+      - drupal-private-files:/opt/drupal/private-files
     environment:
       DB_DRIVER: ${DB_DRIVER}
       DB_HOST: ${DB_HOST}
@@ -17,7 +20,7 @@ services:
       DRUPAL_DOMAIN: ${DRUPAL_DOMAIN}
       DRUPAL_LOCALE: ${DRUPAL_LOCALE}
       DRUPAL_PASSWORD: ${DRUPAL_PASSWORD}
-      DRUPAL_PRIVATE_FILES_DIR: ${DRUPAL_PRIVATE_FILES_DIR}
+      DRUPAL_PRIVATE_FILES_DIR: ${DRUPAL_PRIVATE_FILES_DIR:-/opt/drupal/private-files}
       DRUPAL_PROXY_ADDRESSES: ${DRUPAL_PROXY_ADDRESSES}
       DRUPAL_SITE_NAME: ${DRUPAL_SITE_NAME}
       DRUPAL_TRUSTED_HOSTS: ${DRUPAL_TRUSTED_HOSTS}
@@ -41,9 +44,11 @@ services:
       TS_USERNAME: ${TS_USERNAME}
       TS_WRITE_URL: ${TS_WRITE_URL}
       USER_GROUPS: ${USER_GROUPS}
-      WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION:-1.x-dev}
+      # Recipe versions are baked into the image; these act as flags
+      # (non-empty = apply the recipe on first install).
+      WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION:-true}
       WISSKI_DEFAULT_GRAPH: ${WISSKI_DEFAULT_GRAPH}
-      WISSKI_STARTER_VERSION: ${WISSKI_STARTER_VERSION:-1.x-dev}
+      WISSKI_STARTER_VERSION: ${WISSKI_STARTER_VERSION:-true}
     networks:
       - reverse-proxy
       - internal
@@ -136,7 +141,9 @@ networks:
     driver: bridge
 
 volumes:
-  drupal-root:
-    name: ${SERVICE_NAME}--drupal-root
+  drupal-sites:
+    name: ${SERVICE_NAME}--drupal-sites
+  drupal-private-files:
+    name: ${SERVICE_NAME}--drupal-private-files
   redis-data:
     name: ${SERVICE_NAME}--redis-data
