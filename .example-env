@@ -25,6 +25,10 @@ DRUPAL_PORT=80
 DRUPAL_SITE_NAME=My WissKI
 DRUPAL_TRUSTED_HOST=localhost
 DRUPAL_USER=admin
+# Reverse proxy: auto-detect Docker network CIDRs from container interfaces (recommended
+# behind Traefik/Varnish). Use pipe-separated CIDRs to override, e.g.
+# 172.20.0.0/16|192.168.64.0/20. Set to "none" to disable.
+DRUPAL_PROXY_ADDRESSES=auto
 
 # WissKI settings
 # For a full list of WissKI recipe versions see: https://packagist.org/packages/soda-collection-objects-data-literacy/wisski_recipe_base
