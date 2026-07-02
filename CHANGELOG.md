@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Add Nextcloud connection environment variables: `NEXTCLOUD_BASE_URL`, `NEXTCLOUD_LOGIN_NAME`, `NEXTCLOUD_APP_PASSWORD`
+- Traefik `rate-limit-high@docker` on external Varnish and `raw.*` Drupal routers; internal bypass routers for Docker CIDRs (priority 100)
 
 ### Changed
 - Remove shared volume (`scs--shared-data`) and `/var/private-files` mount from drupal service

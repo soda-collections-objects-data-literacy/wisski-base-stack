@@ -50,17 +50,27 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=reverse-proxy"
+      # Internal reverse-proxy traffic: no rate limit (higher priority than external router below).
+      - "traefik.http.routers.${SERVICE_NAME}-drupal-internal.rule=Host(`raw.${DRUPAL_DOMAIN}`) && (ClientIP(`172.16.0.0/12`) || ClientIP(`192.168.0.0/16`) || ClientIP(`10.0.0.0/8`) || ClientIP(`127.0.0.1/32`) || ClientIP(`::1/128`) || ClientIP(`fd00::/8`))"
+      - "traefik.http.routers.${SERVICE_NAME}-drupal-internal.entrypoints=websecure"
+      - "traefik.http.routers.${SERVICE_NAME}-drupal-internal.priority=100"
+      - "traefik.http.routers.${SERVICE_NAME}-drupal-internal.tls=true"
+      - "traefik.http.routers.${SERVICE_NAME}-drupal-internal.tls.certresolver=le"
+      - "traefik.http.routers.${SERVICE_NAME}-drupal-internal.service=${SERVICE_NAME}-drupal"
+      # External traffic (raw bypass path): rate limit.
       - "traefik.http.routers.${SERVICE_NAME}-drupal.rule=Host(`raw.${DRUPAL_DOMAIN}`)"
       - "traefik.http.routers.${SERVICE_NAME}-drupal.entrypoints=websecure"
+      - "traefik.http.routers.${SERVICE_NAME}-drupal.priority=10"
+      - "traefik.http.routers.${SERVICE_NAME}-drupal.middlewares=rate-limit-high@docker"
       - "traefik.http.routers.${SERVICE_NAME}-drupal.tls=true"
       - "traefik.http.routers.${SERVICE_NAME}-drupal.tls.certresolver=le"
       - "traefik.http.services.${SERVICE_NAME}-drupal.loadbalancer.server.port=80"
     healthcheck:
       test: ["CMD", "curl", "-fsS", "-H", "Host: ${DRUPAL_DOMAIN}", "http://localhost/health"]
-      interval: 30s
+      interval: 15s
       timeout: 60s
-      retries: 3
-      start_period: 180s
+      retries: 30
+      start_period: 120s
   redis:
     image: redis:7.4-alpine
     container_name: ${SERVICE_NAME}--redis
@@ -123,8 +133,18 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=reverse-proxy"
+      # Internal reverse-proxy traffic: no rate limit (higher priority than external router below).
+      - "traefik.http.routers.${SERVICE_NAME}--varnish-internal.rule=Host(`${DRUPAL_DOMAIN}`) && (ClientIP(`172.16.0.0/12`) || ClientIP(`192.168.0.0/16`) || ClientIP(`10.0.0.0/8`) || ClientIP(`127.0.0.1/32`) || ClientIP(`::1/128`) || ClientIP(`fd00::/8`))"
+      - "traefik.http.routers.${SERVICE_NAME}--varnish-internal.entrypoints=websecure"
+      - "traefik.http.routers.${SERVICE_NAME}--varnish-internal.priority=100"
+      - "traefik.http.routers.${SERVICE_NAME}--varnish-internal.tls=true"
+      - "traefik.http.routers.${SERVICE_NAME}--varnish-internal.tls.certresolver=le"
+      - "traefik.http.routers.${SERVICE_NAME}--varnish-internal.service=${SERVICE_NAME}--varnish"
+      # External traffic: rate limit.
       - "traefik.http.routers.${SERVICE_NAME}--varnish.rule=Host(`${DRUPAL_DOMAIN}`)"
       - "traefik.http.routers.${SERVICE_NAME}--varnish.entrypoints=websecure"
+      - "traefik.http.routers.${SERVICE_NAME}--varnish.priority=10"
+      - "traefik.http.routers.${SERVICE_NAME}--varnish.middlewares=rate-limit-high@docker"
       - "traefik.http.routers.${SERVICE_NAME}--varnish.tls=true"
       - "traefik.http.routers.${SERVICE_NAME}--varnish.tls.certresolver=le"
       - "traefik.http.services.${SERVICE_NAME}--varnish.loadbalancer.server.port=80"
