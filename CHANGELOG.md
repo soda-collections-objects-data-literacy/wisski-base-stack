@@ -5,13 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2026-07-03
+
+### Changed
+- Default Redis image from `7.4-alpine` to `8-alpine` (configurable via `REDIS_IMAGE_VERSION`)
+
+### Files Modified
+- `docker-compose.yml`: Redis image version variable
+- `.example-env`: Document `REDIS_IMAGE_VERSION`
+
 ## [3.2.0] - 2026-07-03
+
+### Added
+- Traefik `rate-limit-high@docker` on external Varnish and `raw.*` Drupal routers; internal bypass routers for Docker CIDRs (priority 100)
+
+### Changed
+- Tighten Drupal healthcheck: 15s interval, 30 retries, 120s start period
 
 ### Fixed
 - Rename Varnish image version variable from `SCS_VARNISH_IMAGE_VERSION` to `VARNISH_IMAGE_VERSION` (matches `.example-env`)
 
 ### Files Modified
-- `docker-compose.yml`: Correct Varnish image version env var name
+- `docker-compose.yml`: Rate-limit middleware, internal bypass routers, healthcheck tuning, Varnish image version env var name
 
 ## [3.1.0] - 2026-06-15
 
