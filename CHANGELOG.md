@@ -5,7 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.0.0]
+## [3.2.0] - 2026-07-03
+
+### Fixed
+- Rename Varnish image version variable from `SCS_VARNISH_IMAGE_VERSION` to `VARNISH_IMAGE_VERSION` (matches `.example-env`)
+
+### Files Modified
+- `docker-compose.yml`: Correct Varnish image version env var name
+
+## [3.1.0] - 2026-06-15
+
+### Changed
+- Default `DRUPAL_PROXY_ADDRESSES` to `auto` (auto-detect Docker network CIDRs from container interfaces; recommended behind Traefik/Varnish)
+
+### Files Modified
+- `docker-compose.yml`: Default proxy addresses to `auto`
+- `.example-env`: Document `DRUPAL_PROXY_ADDRESSES` options
+
+## [3.0.0] - 2026-06-10
 
 ### Changed
 - Replace the `drupal-root` volume with two volumes: `drupal-sites` (`/opt/drupal/web/sites`) and `drupal-private-files` (`/opt/drupal/private-files`); the codebase is immutable in the 3.x base image (breaking: 2.x `drupal-root` volumes are not compatible, migrate `web/sites` and private files manually)
