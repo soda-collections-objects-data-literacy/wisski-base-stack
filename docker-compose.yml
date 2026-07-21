@@ -77,6 +77,17 @@ services:
       timeout: 60s
       retries: 30
       start_period: 120s
+    deploy:
+      resources:
+        limits:
+          # Bounds a runaway instance without throttling normal use:
+          # php-fpm (15 workers), nginx, memcached (64M), and iipsrv
+          # (vips image processing) together stay well below this.
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
   redis:
     image: redis:${REDIS_IMAGE_VERSION:-8-alpine}
     container_name: ${SERVICE_NAME}--redis
@@ -119,7 +130,10 @@ services:
       resources:
         limits:
           cpus: '1.0'
-          memory: 512M
+          # Headroom above VARNISH_SIZE (cache storage): worker thread stacks
+          # and transient storage need ~30-50% on top, otherwise the kernel
+          # OOM-kills varnish under load.
+          memory: 1G
         reservations:
           cpus: '0.25'
           memory: 256M
