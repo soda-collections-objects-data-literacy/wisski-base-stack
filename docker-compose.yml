@@ -44,6 +44,7 @@ services:
       TS_USERNAME: ${TS_USERNAME}
       TS_WRITE_URL: ${TS_WRITE_URL}
       USER_GROUPS: ${USER_GROUPS}
+      WISSKI_8X_4X_DEVELOPMENT: ${WISSKI_8X_4X_DEVELOPMENT:-false}
       # Recipe versions are baked into the image; these act as flags
       # (non-empty = apply the recipe on first install).
       WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION:-true}
