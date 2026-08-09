@@ -47,6 +47,23 @@ REDIS_IMAGE_VERSION=8-alpine
 REDIS_HOST=redis
 REDIS_PORT=6379
 
+# Nextcloud mount (private://nextcloud via host FUSE sidecar)
+# SCS Manager sets this to the project's Team Folder only, e.g.
+# /var/lib/scs/nextcloud-mounts/<owner>/<project-label>
+# Default = empty dedicated dir (no Nextcloud). rslave propagation picks up
+# mounts created after the container starts.
+NEXTCLOUD_USER_MOUNT_SOURCE=/var/lib/scs/nextcloud-mounts/_disabled
+# Operating mode of nextcloud_webdav_mount in the container:
+#   external = consume sidecar mount (recommended for SCS)
+#   sync     = legacy in-container WebDAV sync via credentials below
+#   none     = disabled
+NEXTCLOUD_MOUNT_MODE=external
+# Legacy sync-mode credentials (not needed when NEXTCLOUD_MOUNT_MODE=external).
+# Kept for backward compatibility with NEXTCLOUD_MOUNT_MODE=sync.
+# NEXTCLOUD_BASE_URL=
+# NEXTCLOUD_LOGIN_NAME=
+# NEXTCLOUD_APP_PASSWORD=
+
 # Varnish settings
 VARNISH_HOST=varnish
 VARNISH_PORT=8000

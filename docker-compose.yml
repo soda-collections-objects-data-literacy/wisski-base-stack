@@ -10,6 +10,14 @@ services:
       # files persist across container recreations.
       - drupal-sites:/opt/drupal/web/sites
       - drupal-private-files:/opt/drupal/private-files
+      # Project Team Folder only (not the owner's whole Drive). SCS Manager sets
+      # NEXTCLOUD_USER_MOUNT_SOURCE to …/<user>/<project-label>. Default _disabled
+      # is an empty host dir when no project folder is available.
+      - type: bind
+        source: ${NEXTCLOUD_USER_MOUNT_SOURCE:-/var/lib/scs/nextcloud-mounts/_disabled}
+        target: /opt/drupal/private-files/nextcloud
+        bind:
+          propagation: rslave
     environment:
       DB_DRIVER: ${DB_DRIVER}
       DB_HOST: ${DB_HOST}
@@ -30,6 +38,9 @@ services:
       KEYCLOAK_REALM: ${KEYCLOAK_REALM}
       KEYCLOAK_USER_GROUP: ${KEYCLOAK_USER_GROUP}
       MODE: ${MODE:-production}
+      # external = consume sidecar FUSE mount (SCS default); sync = legacy credentials;
+      # unset/empty lets the image decide (backward compatible with sync stacks).
+      NEXTCLOUD_MOUNT_MODE: ${NEXTCLOUD_MOUNT_MODE:-}
       NEXTCLOUD_BASE_URL: ${NEXTCLOUD_BASE_URL}
       NEXTCLOUD_LOGIN_NAME: ${NEXTCLOUD_LOGIN_NAME}
       NEXTCLOUD_APP_PASSWORD: ${NEXTCLOUD_APP_PASSWORD}

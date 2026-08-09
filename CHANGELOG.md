@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Bind-mount the project's Nextcloud Team Folder into Drupal at
+  `/opt/drupal/private-files/nextcloud` with `rslave` propagation
+  (`NEXTCLOUD_USER_MOUNT_SOURCE=…/<owner>/<project-label>`, default `_disabled`)
+- Pass `NEXTCLOUD_MOUNT_MODE` to the Drupal service (`external` recommended for
+  SCS; `sync` keeps legacy credential-based WebDAV)
+
+### Changed
+- Document that `NEXTCLOUD_BASE_URL` / `NEXTCLOUD_LOGIN_NAME` /
+  `NEXTCLOUD_APP_PASSWORD` are only needed for `NEXTCLOUD_MOUNT_MODE=sync`
+- Note: `Transport endpoint is not connected` on the Nextcloud path is fixed
+  centrally by the mount reconciler, not inside the WissKI stack
+
+### Files Modified
+- `docker-compose.yml`: Nextcloud bind + `NEXTCLOUD_MOUNT_MODE`
+- `docker-compose.debug.yml`: Same bind + Nextcloud env vars
+- `.example-env`: Document mount source/mode and sync credentials
+- `README.md`: Nextcloud bind and operations note
+
 ## [3.5.0] - 2026-07-21
 
 ### Changed

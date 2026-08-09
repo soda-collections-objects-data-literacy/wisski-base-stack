@@ -8,9 +8,22 @@ services:
       - soda_scs_manager_deployment_shared-data:/var/private-files
       # Mount debug script
       - ./debug-entrypoint.sh:/debug-entrypoint.sh:ro
+      # Nextcloud FUSE mount of the instance owner (propagated from host sidecar).
+      # Default _disabled is an empty host dir for instances without Nextcloud.
+      - type: bind
+        source: ${NEXTCLOUD_USER_MOUNT_SOURCE:-/var/lib/scs/nextcloud-mounts/_disabled}
+        target: /opt/drupal/private-files/nextcloud
+        bind:
+          propagation: rslave
     environment:
       # Enable debug mode
       DEBUG: "false"
+
+      # Nextcloud mount: external = sidecar FUSE (SCS default); sync = legacy credentials
+      NEXTCLOUD_MOUNT_MODE: ${NEXTCLOUD_MOUNT_MODE:-}
+      NEXTCLOUD_BASE_URL: ${NEXTCLOUD_BASE_URL:-}
+      NEXTCLOUD_LOGIN_NAME: ${NEXTCLOUD_LOGIN_NAME:-}
+      NEXTCLOUD_APP_PASSWORD: ${NEXTCLOUD_APP_PASSWORD:-}
 
       # Database settings
       DB_HOST: ${DB_HOST}
