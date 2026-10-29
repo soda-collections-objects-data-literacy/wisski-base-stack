@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.0] - 2026-10-29
+
 ### Added
 - Bind-mount the project's Nextcloud Team Folder into Drupal at
   `/opt/drupal/private-files/nextcloud` with `rslave` propagation
