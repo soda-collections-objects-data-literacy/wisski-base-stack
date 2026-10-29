@@ -3,14 +3,14 @@
 Compose template for a WissKI instance configured for the SCS Manager deployment
 environment (WissKI Base image).
 
-## Nextcloud private files (`private://nextcloud`)
+## Nextcloud private files (`private://project_files`)
 
 The Drupal service bind-mounts the **project Team Folder** (not the owner's
-whole Drive) into the container as `private://nextcloud`:
+whole Drive) into the container as `private://project_files`:
 
 | Host (`NEXTCLOUD_USER_MOUNT_SOURCE`) | Container |
 | --- | --- |
-| `/var/lib/scs/nextcloud-mounts/<owner>/<project-label>` (set by SCS Manager) | `/opt/drupal/private-files/nextcloud` |
+| `/var/lib/scs/nextcloud-mounts/<owner>/<project-label>` (set by SCS Manager) | `/opt/drupal/private-files/project_files` |
 
 - Propagation is `rslave`: mounts created or renewed by the host sidecar after
   the container starts appear inside the container; the container cannot
@@ -33,6 +33,6 @@ for `NEXTCLOUD_MOUNT_MODE=sync` only. They are not needed for `external`.
 ### Operations note
 
 If the container reports `Transport endpoint is not connected` under
-`/opt/drupal/private-files/nextcloud`, the sidecar FUSE mount is broken.
+`/opt/drupal/private-files/project_files`, the sidecar FUSE mount is broken.
 Recovery is handled centrally by the Nextcloud mount reconciler; the WissKI
 instance itself must not remount or repair it.

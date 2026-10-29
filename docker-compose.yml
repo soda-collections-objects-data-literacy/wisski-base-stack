@@ -15,7 +15,7 @@ services:
       # is an empty host dir when no project folder is available.
       - type: bind
         source: ${NEXTCLOUD_USER_MOUNT_SOURCE:-/var/lib/scs/nextcloud-mounts/_disabled}
-        target: /opt/drupal/private-files/nextcloud
+        target: /opt/drupal/private-files/project_files
         bind:
           propagation: rslave
     environment:

@@ -12,7 +12,7 @@ services:
       # Default _disabled is an empty host dir for instances without Nextcloud.
       - type: bind
         source: ${NEXTCLOUD_USER_MOUNT_SOURCE:-/var/lib/scs/nextcloud-mounts/_disabled}
-        target: /opt/drupal/private-files/nextcloud
+        target: /opt/drupal/private-files/project_files
         bind:
           propagation: rslave
     environment:

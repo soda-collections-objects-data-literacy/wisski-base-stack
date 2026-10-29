@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.1] - 2026-10-29
+
+### Changed
+- Bind the project Team Folder at `/opt/drupal/private-files/project_files`
+  (`private://project_files`) instead of `private://nextcloud`
+
+### Files Modified
+- `docker-compose.yml`: bind target
+- `docker-compose.debug.yml`: bind target
+- `README.md`: mount path
+
 ## [3.6.0] - 2026-10-29
 
 ### Added
