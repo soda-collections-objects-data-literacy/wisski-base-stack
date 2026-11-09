@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.7.0] - 2026-11-09
+
 ### Removed
 - Env var `WISSKI_8X_4X_DEVELOPMENT`; the development image already ships
   WissKI 8.x-4.x.
