@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- An empty `WISSKI_DEFAULT_DATA_MODEL_VERSION` is passed on empty, so the
+  WissKI starts without the ontology and the default data model; only an unset
+  variable still falls back to `true`. Needs wisski-base-image with the
+  matching entrypoint change.
+
 ## [3.7.0] - 2026-11-09
 
 ### Removed

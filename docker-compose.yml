@@ -56,8 +56,10 @@ services:
       TS_WRITE_URL: ${TS_WRITE_URL}
       USER_GROUPS: ${USER_GROUPS}
       # Recipe versions are baked into the image; these act as flags
-      # (non-empty = apply the recipe on first install).
-      WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION:-true}
+      # (non-empty = apply the recipe on first install). An empty
+      # WISSKI_DEFAULT_DATA_MODEL_VERSION skips the default data model; only an
+      # unset one falls back to true.
+      WISSKI_DEFAULT_DATA_MODEL_VERSION: ${WISSKI_DEFAULT_DATA_MODEL_VERSION-true}
       WISSKI_DEFAULT_GRAPH: ${WISSKI_DEFAULT_GRAPH}
       WISSKI_STARTER_VERSION: ${WISSKI_STARTER_VERSION:-true}
     networks:
